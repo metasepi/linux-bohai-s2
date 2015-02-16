@@ -7,4 +7,5 @@
 ```
 $ sudo apt-get install fakeroot kernel-package
 $ fakeroot make-kpkg -j 2 --initrd --revision=0.1 kernel_image kernel_headers
+$ sudo dpkg -i ../linux-*.deb
 ```
