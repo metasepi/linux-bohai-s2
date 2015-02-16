@@ -18,6 +18,7 @@ before_install:
   - gcc --version
 script:
   - cd ${TRAVIS_BUILD_DIR}
-  - fakeroot make-kpkg -j ${NUMCPU} --initrd --revision=0.1 kernel_image kernel_headers | grep -v ' CC '
+  - cp metasepi/linux.config ./.config
+  - yes "" | fakeroot make-kpkg -j ${NUMCPU} --initrd --revision=0.1 kernel_image kernel_headers | grep -v ' CC '
 after_script:
   - date
