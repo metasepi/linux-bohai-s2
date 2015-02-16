@@ -1,0 +1,23 @@
+before_install:
+  - date
+  - cat /proc/cpuinfo
+  - sudo apt-get -qq -y install libgc-dev libgmp-dev make bc fakeroot kernel-package
+  - export NUMCPU=`grep -c "^processor" < /proc/cpuinfo`
+  # Seting-up ATS2-contrib
+  - cd ${HOME}
+  - git clone https://github.com/githwxi/ATS-Postiats-contrib.git
+  - export PATSHOMERELOC=${HOME}/ATS-Postiats-contrib
+  # Building ATS2
+  - cd ${HOME}
+  - git clone git://git.code.sf.net/p/ats2-lang/code ATS2-srcfrg
+  - export PATSHOME=${HOME}/ATS2-srcfrg
+  - export PATH=${PATH}:${PATSHOME}/bin
+  - cd ${PATSHOME} && ./configure && make
+  # Show the toolchain version
+  - patsopt --version
+  - gcc --version
+script:
+  - cd ${TRAVIS_BUILD_DIR}
+  - fakeroot make-kpkg -j ${NUMCPU} --initrd --revision=0.1 kernel_image kernel_headers | grep -v ' CC '
+after_script:
+  - date
