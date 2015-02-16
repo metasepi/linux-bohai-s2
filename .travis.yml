@@ -4,7 +4,7 @@ before_install:
   - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
   - sudo apt-get -qq update
   - sudo apt-get -qq -y install libgc-dev libgmp-dev make bc fakeroot kernel-package gcc-4.8
-  - export CC=gcc-4.8
+  - cd /usr/bin && sudo ln -sf gcc-4.8 gcc
   - export NUMCPU=`grep -c "^processor" < /proc/cpuinfo`
   # Seting-up ATS2-contrib
   - cd ${HOME}
