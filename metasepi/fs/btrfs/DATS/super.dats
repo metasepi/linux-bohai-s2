@@ -2,6 +2,9 @@
  * Original:   fs/btrfs/super.c
  * Git commit: a53f4f8e9c8ebe6c9ee3b34c368913aae9876e22
  *)
+#define ATS_DYNLOADFLAG 0
+#include "share/atspre_define.hats"
+#include "metasepi/staloadall.hats"
 
 %{
 /*
