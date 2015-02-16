@@ -1,3 +1,6 @@
+language: cpp
+compiler:
+    - gcc-4.8
 before_install:
   - date
   - cat /proc/cpuinfo
@@ -16,6 +19,7 @@ before_install:
   # Show the toolchain version
   - patsopt --version
   - gcc --version
+  - gcc-4.8 --version
 script:
   - cd ${TRAVIS_BUILD_DIR}
   - cp metasepi/linux.config ./.config
