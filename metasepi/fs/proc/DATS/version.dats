@@ -5,15 +5,14 @@
 #define ATS_DYNLOADFLAG 0
 #include "share/atspre_define.hats"
 #include "metasepi/staloadall.hats"
+staload "metasepi/include/linux/SATS/fs.sats"
+staload "metasepi/include/linux/SATS/init.sats"
+staload "metasepi/include/linux/SATS/kernel.sats"
+staload "metasepi/include/linux/SATS/proc_fs.sats"
+staload "metasepi/include/linux/SATS/seq_file.sats"
+staload "metasepi/include/linux/SATS/utsname.sats"
 
 %{
-#include <linux/fs.h>
-#include <linux/init.h>
-#include <linux/kernel.h>
-#include <linux/proc_fs.h>
-#include <linux/seq_file.h>
-#include <linux/utsname.h>
-
 static int version_proc_show(struct seq_file *m, void *v)
 {
 	seq_printf(m, linux_proc_banner,
