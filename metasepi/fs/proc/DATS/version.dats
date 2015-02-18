@@ -15,7 +15,7 @@ staload "metasepi/include/linux/SATS/utsname.sats"
 
 extern fun version_proc_show_ats (m: seq_file_t_p): void = "sta#"
 implement version_proc_show_ats (m) = {
-  val _ = $extfcall (int, "seq_printf", m, "  (Linux Bohai %s)\n", METASEPI_VERSION)
+  val _ = $extfcall (int, "seq_printf", m, "  (Metasepi Bohai %s)\n", METASEPI_VERSION)
 }
 
 %{$
