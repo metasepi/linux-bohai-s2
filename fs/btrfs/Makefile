@@ -1,3 +1,4 @@
+ccflags-y := -Wno-implicit-function-declaration -Wno-unused-label
 
 obj-$(CONFIG_BTRFS_FS) := btrfs.o
 
