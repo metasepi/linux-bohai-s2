@@ -1,6 +1,6 @@
 (*
- * Original:   fs/proc/version.c
- * Git commit: abaf3787ac26ba33e2f75e76b1174c32254c25b0
+ * Original:  fs/proc/version.c
+ * GitCommit: abaf3787ac26ba33e2f75e76b1174c32254c25b0
  *)
 #define ATS_DYNLOADFLAG 0
 #include "share/atspre_define.hats"
