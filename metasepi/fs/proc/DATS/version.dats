@@ -5,6 +5,7 @@
 #define ATS_DYNLOADFLAG 0
 #include "share/atspre_define.hats"
 #include "metasepi/staloadall.hats"
+#include "metasepi/H/version.hats"
 staload "metasepi/include/linux/SATS/fs.sats"
 staload "metasepi/include/linux/SATS/init.sats"
 staload "metasepi/include/linux/SATS/kernel.sats"
@@ -12,13 +13,20 @@ staload "metasepi/include/linux/SATS/proc_fs.sats"
 staload "metasepi/include/linux/SATS/seq_file.sats"
 staload "metasepi/include/linux/SATS/utsname.sats"
 
-%{
+extern fun version_proc_show_ats (m: seq_file_t_p): void = "sta#"
+implement version_proc_show_ats (m) = {
+  val _ = $extfcall (int, "seq_printf", m, "  (Linux Bohai %s)\n", METASEPI_VERSION)
+}
+
+%{$
 static int version_proc_show(struct seq_file *m, void *v)
 {
 	seq_printf(m, linux_proc_banner,
 		utsname()->sysname,
 		utsname()->release,
 		utsname()->version);
+        version_proc_show_ats(m);
+
 	return 0;
 }
 

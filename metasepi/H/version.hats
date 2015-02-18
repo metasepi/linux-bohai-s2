@@ -1,0 +1,6 @@
+#ifndef KERNEL_VERSION_HATS
+#define KERNEL_VERSION_HATS
+
+#define METASEPI_VERSION "S2-0.1"
+
+#endif // end of [KERNEL_VERSION_HATS]
