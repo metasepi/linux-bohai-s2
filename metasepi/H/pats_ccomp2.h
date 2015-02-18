@@ -21,8 +21,8 @@
 
 /* ****** ****** */
 
-#ifndef ARDUINO_PATS_CCOMP2_H
-#define ARDUINO_PATS_CCOMP2_H
+#ifndef KERNEL_PATS_CCOMP2_H
+#define KERNEL_PATS_CCOMP2_H
 
 /* ****** ****** */
 
@@ -30,7 +30,7 @@
 
 /* ****** ****** */
 
-#endif // end of [ARDUINO_PATS_CCOMP2_H]
+#endif // end of [KERNEL_PATS_CCOMP2_H]
 
 /* ****** ****** */
 
