@@ -1,3 +1,7 @@
+(*
+ * Original:   include/linux/seq_file.h
+ * Git commit: 46385326cc1577587ed3e7432c2425cf6d3e4308
+ *)
 %{#
 #include "include/linux/CATS/seq_file.cats"
 %}
