@@ -1,0 +1,6 @@
+#ifndef _METASEPI_FS_BTRFS_CATS_VOLUMES_CATS
+#define _METASEPI_FS_BTRFS_CATS_VOLUMES_CATS
+
+#include <fs/btrfs/volumes.h>
+
+#endif /* _METASEPI_FS_BTRFS_CATS_VOLUMES_CATS */

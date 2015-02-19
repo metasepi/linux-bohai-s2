@@ -1,0 +1,6 @@
+#ifndef _METASEPI_FS_BTRFS_CATS_FREE_SPACE_CACHE_CATS
+#define _METASEPI_FS_BTRFS_CATS_FREE_SPACE_CACHE_CATS
+
+#include <fs/btrfs/free-space-cache.h>
+
+#endif /* _METASEPI_FS_BTRFS_CATS_FREE_SPACE_CACHE_CATS */

@@ -1,0 +1,6 @@
+#ifndef _METASEPI_FS_BTRFS_CATS_PROPS_CATS
+#define _METASEPI_FS_BTRFS_CATS_PROPS_CATS
+
+#include <fs/btrfs/props.h>
+
+#endif /* _METASEPI_FS_BTRFS_CATS_PROPS_CATS */

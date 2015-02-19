@@ -1,0 +1,6 @@
+#ifndef _METASEPI_FS_BTRFS_CATS_DISK_IO_CATS
+#define _METASEPI_FS_BTRFS_CATS_DISK_IO_CATS
+
+#include <fs/btrfs/disk-io.h>
+
+#endif /* _METASEPI_FS_BTRFS_CATS_DISK_IO_CATS */

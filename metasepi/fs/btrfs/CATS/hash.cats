@@ -1,0 +1,6 @@
+#ifndef _METASEPI_FS_BTRFS_CATS_HASH_CATS
+#define _METASEPI_FS_BTRFS_CATS_HASH_CATS
+
+#include <fs/btrfs/hash.h>
+
+#endif /* _METASEPI_FS_BTRFS_CATS_HASH_CATS */

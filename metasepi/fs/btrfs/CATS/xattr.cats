@@ -1,0 +1,6 @@
+#ifndef _METASEPI_FS_BTRFS_CATS_XATTR_CATS
+#define _METASEPI_FS_BTRFS_CATS_XATTR_CATS
+
+#include <fs/btrfs/xattr.h>
+
+#endif /* _METASEPI_FS_BTRFS_CATS_XATTR_CATS */

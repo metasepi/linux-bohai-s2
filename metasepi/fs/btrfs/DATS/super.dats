@@ -5,8 +5,53 @@
 #define ATS_DYNLOADFLAG 0
 #include "share/atspre_define.hats"
 #include "metasepi/staloadall.hats"
+staload "metasepi/include/linux/SATS/blkdev.sats"
+staload "metasepi/include/linux/SATS/module.sats"
+staload "metasepi/include/linux/SATS/buffer_head.sats"
+staload "metasepi/include/linux/SATS/fs.sats"
+staload "metasepi/include/linux/SATS/pagemap.sats"
+staload "metasepi/include/linux/SATS/highmem.sats"
+staload "metasepi/include/linux/SATS/time.sats"
+staload "metasepi/include/linux/SATS/init.sats"
+staload "metasepi/include/linux/SATS/seq_file.sats"
+staload "metasepi/include/linux/SATS/string.sats"
+staload "metasepi/include/linux/SATS/backing-dev.sats"
+staload "metasepi/include/linux/SATS/mount.sats"
+staload "metasepi/include/linux/SATS/mpage.sats"
+staload "metasepi/include/linux/SATS/swap.sats"
+staload "metasepi/include/linux/SATS/writeback.sats"
+staload "metasepi/include/linux/SATS/statfs.sats"
+staload "metasepi/include/linux/SATS/compat.sats"
+staload "metasepi/include/linux/SATS/parser.sats"
+staload "metasepi/include/linux/SATS/ctype.sats"
+staload "metasepi/include/linux/SATS/namei.sats"
+staload "metasepi/include/linux/SATS/miscdevice.sats"
+staload "metasepi/include/linux/SATS/magic.sats"
+staload "metasepi/include/linux/SATS/slab.sats"
+staload "metasepi/include/linux/SATS/cleancache.sats"
+staload "metasepi/include/linux/SATS/ratelimit.sats"
+staload "metasepi/include/linux/SATS/btrfs.sats"
+staload "metasepi/fs/btrfs/SATS/delayed-inode.sats"
+staload "metasepi/fs/btrfs/SATS/ctree.sats"
+staload "metasepi/fs/btrfs/SATS/disk-io.sats"
+staload "metasepi/fs/btrfs/SATS/transaction.sats"
+staload "metasepi/fs/btrfs/SATS/btrfs_inode.sats"
+staload "metasepi/fs/btrfs/SATS/print-tree.sats"
+staload "metasepi/fs/btrfs/SATS/hash.sats"
+staload "metasepi/fs/btrfs/SATS/props.sats"
+staload "metasepi/fs/btrfs/SATS/xattr.sats"
+staload "metasepi/fs/btrfs/SATS/volumes.sats"
+staload "metasepi/fs/btrfs/SATS/export.sats"
+staload "metasepi/fs/btrfs/SATS/compression.sats"
+staload "metasepi/fs/btrfs/SATS/rcu-string.sats"
+staload "metasepi/fs/btrfs/SATS/dev-replace.sats"
+staload "metasepi/fs/btrfs/SATS/free-space-cache.sats"
+staload "metasepi/fs/btrfs/SATS/backref.sats"
+staload "metasepi/fs/btrfs/tests/SATS/btrfs-tests.sats"
+staload "metasepi/fs/btrfs/SATS/qgroup.sats"
+staload "metasepi/include/trace/events/SATS/btrfs_create_trace_points.sats"
 
-%{
+%{$
 /*
  * Copyright (C) 2007 Oracle.  All rights reserved.
  *
@@ -24,54 +69,6 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 021110-1307, USA.
  */
-
-#include <linux/blkdev.h>
-#include <linux/module.h>
-#include <linux/buffer_head.h>
-#include <linux/fs.h>
-#include <linux/pagemap.h>
-#include <linux/highmem.h>
-#include <linux/time.h>
-#include <linux/init.h>
-#include <linux/seq_file.h>
-#include <linux/string.h>
-#include <linux/backing-dev.h>
-#include <linux/mount.h>
-#include <linux/mpage.h>
-#include <linux/swap.h>
-#include <linux/writeback.h>
-#include <linux/statfs.h>
-#include <linux/compat.h>
-#include <linux/parser.h>
-#include <linux/ctype.h>
-#include <linux/namei.h>
-#include <linux/miscdevice.h>
-#include <linux/magic.h>
-#include <linux/slab.h>
-#include <linux/cleancache.h>
-#include <linux/ratelimit.h>
-#include <linux/btrfs.h>
-#include "delayed-inode.h"
-#include "ctree.h"
-#include "disk-io.h"
-#include "transaction.h"
-#include "btrfs_inode.h"
-#include "print-tree.h"
-#include "hash.h"
-#include "props.h"
-#include "xattr.h"
-#include "volumes.h"
-#include "export.h"
-#include "compression.h"
-#include "rcu-string.h"
-#include "dev-replace.h"
-#include "free-space-cache.h"
-#include "backref.h"
-#include "tests/btrfs-tests.h"
-
-#include "qgroup.h"
-#define CREATE_TRACE_POINTS
-#include <trace/events/btrfs.h>
 
 static const struct super_operations btrfs_super_ops;
 static struct file_system_type btrfs_fs_type;

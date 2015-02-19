@@ -1,0 +1,6 @@
+#ifndef _METASEPI_FS_BTRFS_CATS_PRINT_TREE_CATS
+#define _METASEPI_FS_BTRFS_CATS_PRINT_TREE_CATS
+
+#include <fs/btrfs/print-tree.h>
+
+#endif /* _METASEPI_FS_BTRFS_CATS_PRINT_TREE_CATS */

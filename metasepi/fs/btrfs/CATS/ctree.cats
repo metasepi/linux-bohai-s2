@@ -1,0 +1,6 @@
+#ifndef _METASEPI_FS_BTRFS_CATS_CTREE_CATS
+#define _METASEPI_FS_BTRFS_CATS_CTREE_CATS
+
+#include <fs/btrfs/ctree.h>
+
+#endif /* _METASEPI_FS_BTRFS_CATS_CTREE_CATS */

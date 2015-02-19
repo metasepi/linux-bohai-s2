@@ -1,0 +1,6 @@
+#ifndef _METASEPI_FS_BTRFS_CATS_DELAYED_INODE_CATS
+#define _METASEPI_FS_BTRFS_CATS_DELAYED_INODE_CATS
+
+#include <fs/btrfs/delayed-inode.h>
+
+#endif /* _METASEPI_FS_BTRFS_CATS_DELAYED_INODE_CATS */

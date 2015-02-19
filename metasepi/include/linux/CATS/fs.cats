@@ -1,6 +1,6 @@
-#ifndef _LINUX_FS_CATS
-#define _LINUX_FS_CATS
+#ifndef _METASEPI_INCLUDE_LINUX_CATS_FS_CATS
+#define _METASEPI_INCLUDE_LINUX_CATS_FS_CATS
 
 #include <linux/fs.h>
 
-#endif /* _LINUX_FS_CATS */
+#endif /* _METASEPI_INCLUDE_LINUX_CATS_FS_CATS */

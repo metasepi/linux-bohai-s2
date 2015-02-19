@@ -1,0 +1,6 @@
+#ifndef _METASEPI_FS_BTRFS_CATS_BTRFS_INODE_CATS
+#define _METASEPI_FS_BTRFS_CATS_BTRFS_INODE_CATS
+
+#include <fs/btrfs/btrfs_inode.h>
+
+#endif /* _METASEPI_FS_BTRFS_CATS_BTRFS_INODE_CATS */

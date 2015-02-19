@@ -1,0 +1,6 @@
+#ifndef _METASEPI_FS_BTRFS_CATS_DEV_REPLACE_CATS
+#define _METASEPI_FS_BTRFS_CATS_DEV_REPLACE_CATS
+
+#include <fs/btrfs/dev-replace.h>
+
+#endif /* _METASEPI_FS_BTRFS_CATS_DEV_REPLACE_CATS */

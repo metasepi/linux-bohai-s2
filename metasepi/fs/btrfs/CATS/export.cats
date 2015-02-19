@@ -1,0 +1,6 @@
+#ifndef _METASEPI_FS_BTRFS_CATS_EXPORT_CATS
+#define _METASEPI_FS_BTRFS_CATS_EXPORT_CATS
+
+#include <fs/btrfs/export.h>
+
+#endif /* _METASEPI_FS_BTRFS_CATS_EXPORT_CATS */
