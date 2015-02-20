@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ATSFILES=`find metasepi -name "*.?ats"`
 
