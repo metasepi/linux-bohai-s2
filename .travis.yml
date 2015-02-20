@@ -3,7 +3,7 @@ before_install:
   - cat /proc/cpuinfo
   - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
   - sudo apt-get -qq update
-  - sudo apt-get -qq -y install libgc-dev libgmp-dev make bc fakeroot kernel-package gcc-4.8
+  - sudo apt-get -qq -y install libgc-dev libgmp-dev make bc fakeroot kernel-package gcc-4.8 binutils
   - cd /usr/bin && sudo ln -sf gcc-4.8 gcc
   - export NUMCPU=`grep -c "^processor" < /proc/cpuinfo`
   # Seting-up ATS2-contrib
@@ -19,7 +19,7 @@ before_install:
   # Show the toolchain version
   - patsopt --version
   - gcc --version
-  - gcc-4.8 --version
+  - ld -version
 script:
   - cd ${TRAVIS_BUILD_DIR}
   - cp metasepi/linux.config ./.config
