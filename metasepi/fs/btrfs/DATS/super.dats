@@ -51,6 +51,10 @@ staload "metasepi/fs/btrfs/tests/SATS/btrfs-tests.sats"
 staload "metasepi/fs/btrfs/SATS/qgroup.sats"
 staload "metasepi/include/trace/events/SATS/btrfs_create_trace_points.sats"
 
+extern fun btrfs_statfs_ats (): int = "sta#"
+implement btrfs_statfs_ats () = 0 where {
+}
+
 %{$
 /*
  * Copyright (C) 2007 Oracle.  All rights reserved.
@@ -1895,7 +1899,7 @@ static int btrfs_statfs(struct dentry *dentry, struct kstatfs *buf)
 	buf->f_fsid.val[0] ^= BTRFS_I(dentry->d_inode)->root->objectid >> 32;
 	buf->f_fsid.val[1] ^= BTRFS_I(dentry->d_inode)->root->objectid;
 
-	return 0;
+	return btrfs_statfs_ats();
 }
 
 static void btrfs_kill_super(struct super_block *sb)
