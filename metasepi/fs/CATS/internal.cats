@@ -1,0 +1,6 @@
+#ifndef _METASEPI_FS_CATS_INTERNAL_CATS
+#define _METASEPI_FS_CATS_INTERNAL_CATS
+
+#include <fs/internal.h>
+
+#endif /* _METASEPI_FS_CATS_INTERNAL_CATS */
