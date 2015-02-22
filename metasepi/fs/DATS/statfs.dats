@@ -24,8 +24,16 @@ extern fun memset0 (s:ptr, c:int, n:size_t): ptr = "mac#" // xxx UNSAFE
 extern fun vfs_ustat_ats (dev: dev_t): Option_vt(@(uint64_t, uint64_t)) = "sta#"
 implement vfs_ustat_ats (dev) = r where {
   var sbuf: kstatfs_t
-  // xxx
-  val r = None_vt()
+  val (pfopt | p) = user_get_super(dev)
+  val r = if (p > null) then let
+    prval Some_v (pf) = pfopt
+    val () = drop_super(pf | p)
+  in
+  end else let
+    prval None_v () = pfopt
+  in
+    None_vt() (* xxx Not correct *)
+  end
 }
 
 extern fun syscall_ustat_ats (dev: dev_t, ubuf: ustat_t_p): int = "sta#"
@@ -35,7 +43,7 @@ implement syscall_ustat_ats (dev, ubuf) = r where {
     val _ = memset0(addr@tmp, 0, sizeof<ustat_t>)
     val () = tmp.f_tfree := $UN.cast bfree
     val () = tmp.f_tinode := $UN.cast ffree
-    val r = if copy_to_user ($UN.cast ubuf, addr@tmp, $UN.cast sizeof<ustat_t>) != 0
+    val r = if copy_to_user0($UN.cast ubuf, addr@tmp, $UN.cast sizeof<ustat_t>) != 0
             then (~ EFAULT) else 0
   }
   val e = vfs_ustat_ats(new_decode_dev(dev))

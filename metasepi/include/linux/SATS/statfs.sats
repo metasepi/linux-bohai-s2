@@ -3,6 +3,7 @@
  * GitCommit: 365b18189789bfa1acd9939e6312b8a4b4577b28
  *)
 staload "metasepi/include/linux/SATS/types.sats"
+staload "metasepi/include/linux/SATS/fs.sats"
 %{#
 #include "include/linux/CATS/statfs.cats"
 %}
@@ -22,3 +23,5 @@ typedef kstatfs_t = $extype_struct"struct kstatfs" of {
   f_spare=   @[lint][4]
 }
 typedef kstatfs_t_p = cPtr0(kstatfs_t)
+
+fun drop_super{l:addr} (super_block_t@l | sb: ptr(l)) :void = "mac#"
