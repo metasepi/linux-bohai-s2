@@ -5,6 +5,8 @@
 #define ATS_DYNLOADFLAG 0
 #include "share/atspre_define.hats"
 #include "metasepi/staloadall.hats"
+staload "metasepi/include/linux/SATS/errno.sats"
+staload "metasepi/include/linux/SATS/types.sats"
 staload "metasepi/include/linux/SATS/syscalls.sats"
 staload "metasepi/include/linux/SATS/export.sats"
 staload "metasepi/include/linux/SATS/fs.sats"
@@ -15,6 +17,27 @@ staload "metasepi/include/linux/SATS/statfs.sats"
 staload "metasepi/include/linux/SATS/security.sats"
 staload "metasepi/include/linux/SATS/uaccess.sats"
 staload "metasepi/fs/SATS/internal.sats"
+staload UN = "prelude/SATS/unsafe.sats"
+
+extern fun memset (s:ptr, c:int, n:size_t): ptr = "mac#" // xxx UNSAFE
+
+extern fun vfs_ustat_ats (dev: dev_t, sbuf: kstatfs_t_p): int = "sta#"
+implement vfs_ustat_ats (dev, sbuf) = 0 where {
+  // xxx
+}
+
+extern fun syscall_ustat_ats (dev: dev_t, ubuf: ustat_t_p): int = "sta#"
+implement syscall_ustat_ats (dev, ubuf) = r where {
+  fun copy_ustat (): int = r where {
+    var tmp: ustat_t
+    val _ = memset(addr@tmp, 0, sizeof<ustat_t>);
+    val r = if copy_to_user ($UN.cast ubuf, addr@tmp, $UN.cast sizeof<ustat_t>) != 0
+            then (~ EFAULT) else 0
+  }
+  var sbuf: kstatfs_t
+  val e = vfs_ustat_ats(new_decode_dev(dev), addr@sbuf)
+  val r = if e != 0 then e else copy_ustat()
+}
 
 %{$
 static int flags_by_mnt(int mnt_flags)
