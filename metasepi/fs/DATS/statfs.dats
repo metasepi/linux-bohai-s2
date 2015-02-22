@@ -23,16 +23,18 @@ extern fun memset0 (s:ptr, c:int, n:size_t): ptr = "mac#" // xxx UNSAFE
 
 extern fun vfs_ustat_ats (dev: dev_t): Option_vt(@(uint64_t, uint64_t)) = "sta#"
 implement vfs_ustat_ats (dev) = r where {
-  var sbuf: kstatfs_t
   val (pfopt | p) = user_get_super(dev)
-  val () = if (p > the_null_ptr) then {
+  val r = (if (p > the_null_ptr) then let
+      var sbuf: kstatfs_t
       prval Some_v (pf) = pfopt
       val () = drop_super(pf | p)
-    }
-    else {
+    in
+      None_vt() (* xxx Not correct *)
+    end else let
       prval None_v () = pfopt
-    }
-  val r = None_vt() (* xxx Not correct *)
+    in
+      None_vt() (* xxx Not correct *)
+    end):Option_vt(@(uint64_t, uint64_t))
 }
 
 extern fun syscall_ustat_ats (dev: dev_t, ubuf: ustat_t_p): int = "sta#"
