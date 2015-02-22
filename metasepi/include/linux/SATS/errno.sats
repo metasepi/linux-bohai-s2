@@ -7,3 +7,4 @@
 %}
 
 #define EFAULT 14 (* Bad address *)
+#define EINVAL 22 (* Invalid argument *)

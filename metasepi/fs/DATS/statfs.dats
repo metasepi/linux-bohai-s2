@@ -19,24 +19,29 @@ staload "metasepi/include/linux/SATS/uaccess.sats"
 staload "metasepi/fs/SATS/internal.sats"
 staload UN = "prelude/SATS/unsafe.sats"
 
-extern fun memset (s:ptr, c:int, n:size_t): ptr = "mac#" // xxx UNSAFE
+extern fun memset0 (s:ptr, c:int, n:size_t): ptr = "mac#" // xxx UNSAFE
 
-extern fun vfs_ustat_ats (dev: dev_t, sbuf: kstatfs_t_p): int = "sta#"
-implement vfs_ustat_ats (dev, sbuf) = 0 where {
+extern fun vfs_ustat_ats (dev: dev_t): Option_vt(@(uint64_t, uint64_t)) = "sta#"
+implement vfs_ustat_ats (dev) = r where {
+  var sbuf: kstatfs_t
   // xxx
+  val r = None_vt()
 }
 
 extern fun syscall_ustat_ats (dev: dev_t, ubuf: ustat_t_p): int = "sta#"
 implement syscall_ustat_ats (dev, ubuf) = r where {
-  fun copy_ustat (): int = r where {
+  fun copy_ustat (bfree: uint64_t, ffree: uint64_t): int = r where {
     var tmp: ustat_t
-    val _ = memset(addr@tmp, 0, sizeof<ustat_t>);
+    val _ = memset0(addr@tmp, 0, sizeof<ustat_t>)
+    val () = tmp.f_tfree := $UN.cast bfree
+    val () = tmp.f_tinode := $UN.cast ffree
     val r = if copy_to_user ($UN.cast ubuf, addr@tmp, $UN.cast sizeof<ustat_t>) != 0
             then (~ EFAULT) else 0
   }
-  var sbuf: kstatfs_t
-  val e = vfs_ustat_ats(new_decode_dev(dev), addr@sbuf)
-  val r = if e != 0 then e else copy_ustat()
+  val e = vfs_ustat_ats(new_decode_dev(dev))
+  val r = case+ e of
+          | ~Some_vt (@(bfree, ffree)) => copy_ustat(bfree, ffree)
+          | ~None_vt () => (~ EINVAL)
 }
 
 %{$
