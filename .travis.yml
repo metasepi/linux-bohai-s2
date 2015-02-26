@@ -24,6 +24,6 @@ script:
   - cd ${TRAVIS_BUILD_DIR}
   - cp metasepi/linux.config ./.config
   - yes "" | make oldconfig
-  - make -j ${NUMCPU} | grep -v ' CC '
+  - make -j ${NUMCPU}
 after_script:
   - date
