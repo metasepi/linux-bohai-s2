@@ -21,36 +21,30 @@ staload UN = "prelude/SATS/unsafe.sats"
 
 extern fun memset0 (s:ptr, c:int, n:size_t): ptr = "mac#" // xxx UNSAFE
 
-extern fun vfs_ustat_ats (dev: dev_t): Option_vt(@(uint64_t, uint64_t)) = "sta#"
-implement vfs_ustat_ats (dev) = r where {
-  val (pfopt | p) = user_get_super(dev)
-  val r = (if (p > the_null_ptr) then let
-      var sbuf: kstatfs_t
-      prval Some_v (pf) = pfopt
-      val () = drop_super(pf | p)
-    in
-      None_vt() (* xxx Not correct *)
-    end else let
-      prval None_v () = pfopt
-    in
-      None_vt() (* xxx Not correct *)
-    end):Option_vt(@(uint64_t, uint64_t))
-}
+extern fun vfs_ustat
+(dev: dev_t, sbuf: &kstatfs_t? >> opt (kstatfs_t, i==0)): #[i:int | i != 0] int(i) = "mac#"
 
 extern fun syscall_ustat_ats (dev: dev_t, ubuf: ustat_t_p): int = "sta#"
 implement syscall_ustat_ats (dev, ubuf) = r where {
-  fun copy_ustat (bfree: uint64_t, ffree: uint64_t): int = r where {
+  fun copy_tmp (sbuf: &kstatfs_t): int = r where {
     var tmp: ustat_t
     val _ = memset0(addr@tmp, 0, sizeof<ustat_t>)
-    val () = tmp.f_tfree := $UN.cast bfree
-    val () = tmp.f_tinode := $UN.cast ffree
+    val () = tmp.f_tfree := $UN.cast(sbuf.f_bfree)
+    val () = tmp.f_tinode := $UN.cast(sbuf.f_ffree)
     val r = if copy_to_user0($UN.cast ubuf, addr@tmp, $UN.cast sizeof<ustat_t>) != 0
             then (~ EFAULT) else 0
   }
-  val e = vfs_ustat_ats(new_decode_dev(dev))
-  val r = case+ e of
-          | ~Some_vt (@(bfree, ffree)) => copy_ustat(bfree, ffree)
-          | ~None_vt () => (~ EINVAL)
+  var sbuf: kstatfs_t
+  val e = vfs_ustat(new_decode_dev(dev), sbuf)
+  val r = (if e != 0 then let
+      prval () = opt_unnone(sbuf)
+    in
+      e:int
+    end else let
+      prval () = opt_unsome(sbuf)
+    in
+      copy_tmp(sbuf)
+    end):int
 }
 
 %{$
