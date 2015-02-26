@@ -34,17 +34,17 @@ implement syscall_ustat_ats (dev, ubuf) = r where {
     val r = if copy_to_user0($UN.cast ubuf, addr@tmp, $UN.cast sizeof<ustat_t>) != 0
             then (~ EFAULT) else 0
   }
-  var sbuf: kstatfs_t
+  var sbuf: kstatfs_t?
   val e = vfs_ustat(new_decode_dev(dev), sbuf)
-  val r = (if e != 0 then let
+  val r = if e != 0 then let
       prval () = opt_unnone(sbuf)
     in
-      e:int
+      e
     end else let
       prval () = opt_unsome(sbuf)
     in
       copy_tmp(sbuf)
-    end):int
+    end
 }
 
 %{$
