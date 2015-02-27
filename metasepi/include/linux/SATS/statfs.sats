@@ -22,6 +22,5 @@ typedef kstatfs_t = $extype_struct"struct kstatfs" of {
   f_flags=   lint,
   f_spare=   @[lint][4]
 }
-typedef kstatfs_t_p = cPtr0(kstatfs_t)
 
 fun drop_super{l:addr} (super_block_t@l | sb: ptr(l)) :void = "mac#"

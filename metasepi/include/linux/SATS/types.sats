@@ -19,4 +19,3 @@ typedef ustat_t = $extype_struct"struct ustat" of {
   f_fname=  @[char][6],
   f_fpack=  @[char][6]
 }
-typedef ustat_t_p = cPtr0(ustat_t)

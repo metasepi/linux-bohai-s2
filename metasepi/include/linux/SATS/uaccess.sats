@@ -6,4 +6,4 @@
 #include "include/linux/CATS/uaccess.cats"
 %}
 
-fun copy_to_user0 (to: ptr, from: ptr, n: ulint): lint = "mac#"
+fun copy_to_user (to: ptr, from: ptr, n: ulint): lint = "mac#"

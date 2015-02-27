@@ -19,19 +19,19 @@ staload "metasepi/include/linux/SATS/uaccess.sats"
 staload "metasepi/fs/SATS/internal.sats"
 staload UN = "prelude/SATS/unsafe.sats"
 
-extern fun memset0 (s:ptr, c:int, n:size_t): ptr = "mac#" // xxx UNSAFE
+extern fun memset (s:ptr, c:int, n:size_t): ptr = "mac#" // xxx UNSAFE
 
 extern fun vfs_ustat
 (dev: dev_t, sbuf: &kstatfs_t? >> opt (kstatfs_t, i==0)): #[i:int | i != 0] int(i) = "mac#"
 
-extern fun syscall_ustat_ats (dev: dev_t, ubuf: ustat_t_p): int = "sta#"
+extern fun syscall_ustat_ats (dev: dev_t, ubuf: ptr): int = "sta#"
 implement syscall_ustat_ats (dev, ubuf) = r where {
   fun copy_tmp (sbuf: &kstatfs_t): int = r where {
     var tmp: ustat_t
-    val _ = memset0(addr@tmp, 0, sizeof<ustat_t>)
+    val _ = memset(addr@tmp, 0, sizeof<ustat_t>)
     val () = tmp.f_tfree := $UN.cast(sbuf.f_bfree)
     val () = tmp.f_tinode := $UN.cast(sbuf.f_ffree)
-    val r = if copy_to_user0($UN.cast ubuf, addr@tmp, $UN.cast sizeof<ustat_t>) != 0
+    val r = if copy_to_user(ubuf, addr@tmp, $UN.cast sizeof<ustat_t>) != 0
             then (~ EFAULT) else 0
   }
   var sbuf: kstatfs_t?
@@ -266,16 +266,6 @@ int vfs_ustat(dev_t dev, struct kstatfs *sbuf)
 
 SYSCALL_DEFINE2(ustat, unsigned, dev, struct ustat __user *, ubuf)
 {
-	struct ustat tmp;
-	struct kstatfs sbuf;
-	int err = vfs_ustat(new_decode_dev(dev), &sbuf);
-	if (err)
-		return err;
-
-	memset(&tmp,0,sizeof(struct ustat));
-	tmp.f_tfree = sbuf.f_bfree;
-	tmp.f_tinode = sbuf.f_ffree;
-
-	return copy_to_user(ubuf, &tmp, sizeof(struct ustat)) ? -EFAULT : 0;
+	return syscall_ustat_ats(dev, ubuf);
 }
 %}
