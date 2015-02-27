@@ -21,8 +21,27 @@ staload UN = "prelude/SATS/unsafe.sats"
 
 extern fun memset (s:ptr, c:int, n:size_t): ptr = "mac#" // xxx UNSAFE
 
+extern fun statfs_by_dentry
+(dentry: dentry_t_p, sbuf: &kstatfs_t? >> opt (kstatfs_t, i==0)): #[i:int | i != 0] int(i) = "mac#"
+
 extern fun vfs_ustat
 (dev: dev_t, sbuf: &kstatfs_t? >> opt (kstatfs_t, i==0)): #[i:int | i != 0] int(i) = "mac#"
+
+fun vfs_ustat_ats
+(dev: dev_t, sbuf: &kstatfs_t? >> opt (kstatfs_t, i==0)): #[i:int | i != 0] int(i) = r where {
+  val (pfopt | p) = user_get_super(dev)
+  val r = if (p > the_null_ptr) then let
+      prval Some_v (pf) = pfopt
+      val e = statfs_by_dentry(p->s_root, sbuf);
+      val () = drop_super(pf | p)
+    in
+      e
+    end else let
+      prval None_v () = pfopt
+    in
+      (~ EINVAL)
+    end
+}
 
 extern fun syscall_ustat_ats (dev: dev_t, ubuf: ptr): int = "sta#"
 implement syscall_ustat_ats (dev, ubuf) = r where {
