@@ -28,20 +28,18 @@ extern fun vfs_ustat
 (dev: dev_t, sbuf: &kstatfs_t? >> opt (kstatfs_t, i==0)): #[i:int | i != 0] int(i) = "mac#"
 
 fun vfs_ustat_ats
-(dev: dev_t, sbuf: &kstatfs_t? >> opt (kstatfs_t, i==0)): #[i:int | i
-!= 0] int(i) = let
+(dev: dev_t, sbuf: &kstatfs_t? >> opt (kstatfs_t, i==0)): #[i:int | i != 0] int(i) = let
   val (pfopt | p) = user_get_super(dev)
 in
   if (p > 0) then let
       prval Some_v (pf) = pfopt
       val e = statfs_by_dentry(p->s_root, sbuf);
       val () = drop_super(pf | p)
-      prval () = opt_some(sbuf)
     in
       e
     end else let
       prval None_v () = pfopt
-      prval () = opt_none{kstatfs_t}()
+      prval () = opt_none{kstatfs_t}(sbuf)
     in
       (~ EINVAL)
     end
