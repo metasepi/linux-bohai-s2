@@ -21,19 +21,17 @@ staload UN = "prelude/SATS/unsafe.sats"
 
 extern fun memset (s:ptr, c:int, n:size_t): ptr = "mac#" // xxx UNSAFE
 
-extern fun statfs_by_dentry
-(dentry: dentry_t_p, sbuf: &kstatfs_t? >> opt (kstatfs_t, i==0)): #[i:int | i != 0] int(i) = "mac#"
+extern fun statfs_by_dentry_wrap
+(dentry: dentry_t_p, sbuf: &kstatfs_t? >> opt (kstatfs_t, i==0)): #[i:int | i <= 0] int(i) = "mac#"
 
-extern fun vfs_ustat
-(dev: dev_t, sbuf: &kstatfs_t? >> opt (kstatfs_t, i==0)): #[i:int | i != 0] int(i) = "mac#"
-
-fun vfs_ustat_ats
-(dev: dev_t, sbuf: &kstatfs_t? >> opt (kstatfs_t, i==0)): #[i:int | i != 0] int(i) = let
+extern fun vfs_ustat_ats
+(dev: dev_t, sbuf: &kstatfs_t? >> opt (kstatfs_t, i==0)): #[i:int | i <= 0] int(i) = "mac#"
+implement vfs_ustat_ats(dev, sbuf) = let
   val (pfopt | p) = user_get_super(dev)
 in
   if (p > 0) then let
       prval Some_v (pf) = pfopt
-      val e = statfs_by_dentry(p->s_root, sbuf);
+      val e = statfs_by_dentry_wrap(p->s_root, sbuf);
       val () = drop_super(pf | p)
     in
       e
@@ -56,7 +54,7 @@ implement syscall_ustat_ats (dev, ubuf) = r where {
             then (~ EFAULT) else 0
   }
   var sbuf: kstatfs_t?
-  val e = vfs_ustat(new_decode_dev(dev), sbuf)
+  val e = vfs_ustat_ats(new_decode_dev(dev), sbuf)
   val r = if e != 0 then let
       prval () = opt_unnone(sbuf)
     in
@@ -273,16 +271,14 @@ SYSCALL_DEFINE3(fstatfs64, unsigned int, fd, size_t, sz, struct statfs64 __user 
 	return error;
 }
 
+int statfs_by_dentry_wrap(void *dentry, struct kstatfs *buf)
+{
+	return statfs_by_dentry((struct dentry *) dentry, buf);
+}
+
 int vfs_ustat(dev_t dev, struct kstatfs *sbuf)
 {
-	struct super_block *s = user_get_super(dev);
-	int err;
-	if (!s)
-		return -EINVAL;
-
-	err = statfs_by_dentry(s->s_root, sbuf);
-	drop_super(s);
-	return err;
+	return vfs_ustat_ats(dev, sbuf);
 }
 
 SYSCALL_DEFINE2(ustat, unsigned, dev, struct ustat __user *, ubuf)
