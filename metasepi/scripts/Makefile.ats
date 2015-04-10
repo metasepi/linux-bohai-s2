@@ -10,4 +10,5 @@ c_flags += -I$(PATSHOME) -I$(PATSHOME)/ccomp/runtime -I${PATSHOMERELOC}/contrib 
 
 # Compile ATS2 source code
 $(src)/%_dats.c: metasepi/$(src)/DATS/%.dats
-	$(ATSOPT) -o $@ -d $<
+	$(ATSOPT) -o $@.tmp -d $<
+	mv $@.tmp $@
