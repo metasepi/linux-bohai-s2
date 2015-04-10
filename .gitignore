@@ -105,3 +105,8 @@ all.config
 
 # Kdevelop4
 *.kdev4
+
+# ATS2
+*_dats.c
+*.tmp
+
