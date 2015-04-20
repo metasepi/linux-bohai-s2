@@ -1,6 +1,6 @@
 (*
  * Original:  include/linux/types.h
- * GitCommit: dd4a5c1e6531b9c6ba6ee1f3cb11f0aeea25881e
+ * GitCommit: 23f40a94d860449f39f00c3350bf850d15983e63
  *)
 %{#
 #include "include/linux/CATS/types.cats"
