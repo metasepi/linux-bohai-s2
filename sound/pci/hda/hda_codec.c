@@ -436,7 +436,7 @@ static unsigned int get_num_devices(struct hda_codec *codec, hda_nid_t nid)
 	    get_wcaps_type(wcaps) != AC_WID_PIN)
 		return 0;
 
-	parm = snd_hda_param_read(codec, nid, AC_PAR_DEVLIST_LEN);
+	parm = snd_hdac_read_parm_uncached(&codec->core, nid, AC_PAR_DEVLIST_LEN);
 	if (parm == -1 && codec->bus->rirb_error)
 		parm = 0;
 	return parm & AC_DEV_LIST_LEN_MASK;
@@ -873,14 +873,15 @@ struct hda_pcm *snd_hda_codec_pcm_new(struct hda_codec *codec,
 	struct hda_pcm *pcm;
 	va_list args;
 
-	va_start(args, fmt);
 	pcm = kzalloc(sizeof(*pcm), GFP_KERNEL);
 	if (!pcm)
 		return NULL;
 
 	pcm->codec = codec;
 	kref_init(&pcm->kref);
+	va_start(args, fmt);
 	pcm->name = kvasprintf(GFP_KERNEL, fmt, args);
+	va_end(args);
 	if (!pcm->name) {
 		kfree(pcm);
 		return NULL;
@@ -1373,6 +1374,31 @@ int snd_hda_override_amp_caps(struct hda_codec *codec, hda_nid_t nid, int dir,
 	return snd_hdac_override_parm(&codec->core, nid, parm, caps);
 }
 EXPORT_SYMBOL_GPL(snd_hda_override_amp_caps);
+
+/**
+ * snd_hda_codec_amp_update - update the AMP mono value
+ * @codec: HD-audio codec
+ * @nid: NID to read the AMP value
+ * @ch: channel to update (0 or 1)
+ * @dir: #HDA_INPUT or #HDA_OUTPUT
+ * @idx: the index value (only for input direction)
+ * @mask: bit mask to set
+ * @val: the bits value to set
+ *
+ * Update the AMP values for the given channel, direction and index.
+ */
+int snd_hda_codec_amp_update(struct hda_codec *codec, hda_nid_t nid,
+			     int ch, int dir, int idx, int mask, int val)
+{
+	unsigned int cmd = snd_hdac_regmap_encode_amp(nid, ch, dir, idx);
+
+	/* enable fake mute if no h/w mute but min=mute */
+	if ((query_amp_caps(codec, nid, dir) &
+	     (AC_AMPCAP_MUTE | AC_AMPCAP_MIN_MUTE)) == AC_AMPCAP_MIN_MUTE)
+		cmd |= AC_AMP_FAKE_MUTE;
+	return snd_hdac_regmap_update_raw(&codec->core, cmd, mask, val);
+}
+EXPORT_SYMBOL_GPL(snd_hda_codec_amp_update);
 
 /**
  * snd_hda_codec_amp_stereo - update the AMP stereo values
@@ -2082,6 +2108,16 @@ static struct snd_kcontrol_new vmaster_mute_mode = {
 	.put = vmaster_mute_mode_put,
 };
 
+/* meta hook to call each driver's vmaster hook */
+static void vmaster_hook(void *private_data, int enabled)
+{
+	struct hda_vmaster_mute_hook *hook = private_data;
+
+	if (hook->mute_mode != HDA_VMUTE_FOLLOW_MASTER)
+		enabled = hook->mute_mode;
+	hook->hook(hook->codec, enabled);
+}
+
 /**
  * snd_hda_add_vmaster_hook - Add a vmaster hook for mute-LED
  * @codec: the HDA codec
@@ -2100,9 +2136,9 @@ int snd_hda_add_vmaster_hook(struct hda_codec *codec,
 
 	if (!hook->hook || !hook->sw_kctl)
 		return 0;
-	snd_ctl_add_vmaster_hook(hook->sw_kctl, hook->hook, codec);
 	hook->codec = codec;
 	hook->mute_mode = HDA_VMUTE_FOLLOW_MASTER;
+	snd_ctl_add_vmaster_hook(hook->sw_kctl, vmaster_hook, hook);
 	if (!expose_enum_ctl)
 		return 0;
 	kctl = snd_ctl_new1(&vmaster_mute_mode, hook);
@@ -2128,14 +2164,7 @@ void snd_hda_sync_vmaster_hook(struct hda_vmaster_mute_hook *hook)
 	 */
 	if (hook->codec->bus->shutdown)
 		return;
-	switch (hook->mute_mode) {
-	case HDA_VMUTE_FOLLOW_MASTER:
-		snd_ctl_sync_vmaster_hook(hook->sw_kctl);
-		break;
-	default:
-		hook->hook(hook->codec, hook->mute_mode);
-		break;
-	}
+	snd_ctl_sync_vmaster_hook(hook->sw_kctl);
 }
 EXPORT_SYMBOL_GPL(snd_hda_sync_vmaster_hook);
 
@@ -2529,7 +2558,7 @@ static void set_dig_out(struct hda_codec *codec, hda_nid_t nid,
 	if (!d)
 		return;
 	for (; *d; d++)
-		snd_hdac_regmap_update(&codec->core, nid,
+		snd_hdac_regmap_update(&codec->core, *d,
 				       AC_VERB_SET_DIGI_CONVERT_1, mask, val);
 }
 

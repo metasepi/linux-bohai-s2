@@ -121,6 +121,8 @@ extern struct device_node *of_stdout;
 extern raw_spinlock_t devtree_lock;
 
 #ifdef CONFIG_OF
+void of_core_init(void);
+
 static inline bool is_of_node(struct fwnode_handle *fwnode)
 {
 	return fwnode && fwnode->type == FWNODE_OF;
@@ -305,6 +307,7 @@ extern int of_property_read_string_helper(struct device_node *np,
 extern int of_device_is_compatible(const struct device_node *device,
 				   const char *);
 extern bool of_device_is_available(const struct device_node *device);
+extern bool of_device_is_big_endian(const struct device_node *device);
 extern const void *of_get_property(const struct device_node *node,
 				const char *name,
 				int *lenp);
@@ -374,6 +377,10 @@ const char *of_prop_next_string(struct property *prop, const char *cur);
 bool of_console_check(struct device_node *dn, char *name, int index);
 
 #else /* CONFIG_OF */
+
+static inline void of_core_init(void)
+{
+}
 
 static inline bool is_of_node(struct fwnode_handle *fwnode)
 {
@@ -463,6 +470,11 @@ static inline int of_device_is_compatible(const struct device_node *device,
 }
 
 static inline bool of_device_is_available(const struct device_node *device)
+{
+	return false;
+}
+
+static inline bool of_device_is_big_endian(const struct device_node *device)
 {
 	return false;
 }

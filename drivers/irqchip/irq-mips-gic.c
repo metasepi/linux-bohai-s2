@@ -271,7 +271,7 @@ int gic_get_c0_fdc_int(void)
 				  GIC_LOCAL_TO_HWIRQ(GIC_LOCAL_INT_FDC));
 }
 
-static void gic_handle_shared_int(void)
+static void gic_handle_shared_int(bool chained)
 {
 	unsigned int i, intr, virq;
 	unsigned long *pcpu_mask;
@@ -299,7 +299,10 @@ static void gic_handle_shared_int(void)
 	while (intr != gic_shared_intrs) {
 		virq = irq_linear_revmap(gic_irq_domain,
 					 GIC_SHARED_TO_HWIRQ(intr));
-		do_IRQ(virq);
+		if (chained)
+			generic_handle_irq(virq);
+		else
+			do_IRQ(virq);
 
 		/* go to next pending bit */
 		bitmap_clear(pending, intr, 1);
@@ -389,19 +392,19 @@ static int gic_set_affinity(struct irq_data *d, const struct cpumask *cpumask,
 	int		i;
 
 	cpumask_and(&tmp, cpumask, cpu_online_mask);
-	if (cpus_empty(tmp))
+	if (cpumask_empty(&tmp))
 		return -EINVAL;
 
 	/* Assumption : cpumask refers to a single CPU */
 	spin_lock_irqsave(&gic_lock, flags);
 
 	/* Re-route this IRQ */
-	gic_map_to_vpe(irq, first_cpu(tmp));
+	gic_map_to_vpe(irq, cpumask_first(&tmp));
 
 	/* Update the pcpu_masks */
 	for (i = 0; i < NR_CPUS; i++)
 		clear_bit(irq, pcpu_masks[i].pcpu_mask);
-	set_bit(irq, pcpu_masks[first_cpu(tmp)].pcpu_mask);
+	set_bit(irq, pcpu_masks[cpumask_first(&tmp)].pcpu_mask);
 
 	cpumask_copy(d->affinity, cpumask);
 	spin_unlock_irqrestore(&gic_lock, flags);
@@ -431,7 +434,7 @@ static struct irq_chip gic_edge_irq_controller = {
 #endif
 };
 
-static void gic_handle_local_int(void)
+static void gic_handle_local_int(bool chained)
 {
 	unsigned long pending, masked;
 	unsigned int intr, virq;
@@ -445,7 +448,10 @@ static void gic_handle_local_int(void)
 	while (intr != GIC_NUM_LOCAL_INTRS) {
 		virq = irq_linear_revmap(gic_irq_domain,
 					 GIC_LOCAL_TO_HWIRQ(intr));
-		do_IRQ(virq);
+		if (chained)
+			generic_handle_irq(virq);
+		else
+			do_IRQ(virq);
 
 		/* go to next pending bit */
 		bitmap_clear(&pending, intr, 1);
@@ -509,13 +515,14 @@ static struct irq_chip gic_all_vpes_local_irq_controller = {
 
 static void __gic_irq_dispatch(void)
 {
-	gic_handle_local_int();
-	gic_handle_shared_int();
+	gic_handle_local_int(false);
+	gic_handle_shared_int(false);
 }
 
 static void gic_irq_dispatch(unsigned int irq, struct irq_desc *desc)
 {
-	__gic_irq_dispatch();
+	gic_handle_local_int(true);
+	gic_handle_shared_int(true);
 }
 
 #ifdef CONFIG_MIPS_GIC_IPI
