@@ -1,5 +1,5 @@
 #!/bin/awk -f
-# Usage: awk -f metasepi/tools/chkupdate.awk < metasepi/fs/proc/DATS/version.dat
+# Usage: awk -f metasepi/tools/chkupdate.awk  metasepi/fs/proc/DATS/version.dat
 
 BEGIN {
 	comment_level = 0
