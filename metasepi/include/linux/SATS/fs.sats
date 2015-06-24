@@ -1,6 +1,5 @@
 (*
- * Original:  include/linux/fs.h
- * GitCommit: 54e514b91b95d6441c12a7955addfb9f9d2afc65
+ * OriginalCode: 54e514b91b95d6441c12a7955addfb9f9d2afc65 include/linux/fs.h
  *)
 staload "metasepi/include/linux/SATS/types.sats"
 %{#

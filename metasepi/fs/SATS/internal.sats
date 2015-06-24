@@ -1,6 +1,5 @@
 (*
- * Original:  fs/internal.h
- * GitCommit: eb6ef3df4faa5424cf2a24b4e4f3eeceb1482a8e
+ * OriginalCode: eb6ef3df4faa5424cf2a24b4e4f3eeceb1482a8e fs/internal.h
  *)
 staload "metasepi/include/linux/SATS/types.sats"
 staload "metasepi/include/linux/SATS/fs.sats"

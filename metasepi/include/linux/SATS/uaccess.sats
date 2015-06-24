@@ -1,6 +1,5 @@
 (*
- * Original:  include/linux/uaccess.h
- * GitCommit: 62b94a08da1bae9d187d49dfcd6665af393750f8
+ * OriginalCode: 62b94a08da1bae9d187d49dfcd6665af393750f8 include/linux/uaccess.h
  *)
 %{#
 #include "include/linux/CATS/uaccess.cats"

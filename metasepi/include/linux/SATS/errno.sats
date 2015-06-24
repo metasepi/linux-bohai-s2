@@ -1,6 +1,5 @@
 (*
- * Original:  include/linux/errno.h
- * GitCommit: 41003a7bcfed1255032e1e7c7b487e505b22e298
+ * OriginalCode: 41003a7bcfed1255032e1e7c7b487e505b22e298 include/linux/errno.h
  *)
 %{#
 #include "include/linux/CATS/errno.cats"

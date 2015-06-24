@@ -1,6 +1,5 @@
 (*
- * Original:  include/linux/seq_file.h
- * GitCommit: 46385326cc1577587ed3e7432c2425cf6d3e4308
+ * OriginalCode: 46385326cc1577587ed3e7432c2425cf6d3e4308 include/linux/seq_file.h
  *)
 %{#
 #include "include/linux/CATS/seq_file.cats"

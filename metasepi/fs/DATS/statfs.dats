@@ -1,6 +1,5 @@
 (*
- * Original:  fs/statfs.c
- * GitCommit: 9d05746e7b16d8565dddbe3200faa1e669d23bbf
+ * OriginalCode: 9d05746e7b16d8565dddbe3200faa1e669d23bbf fs/statfs.c
  *)
 #define ATS_DYNLOADFLAG 0
 #include "share/atspre_define.hats"
