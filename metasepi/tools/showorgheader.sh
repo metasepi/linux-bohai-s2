@@ -11,7 +11,6 @@ GITCOMMIT=`awk "BEGIN { str = \"${GITLOG}\"; sub(/^commit +/, \"\", str); print 
 
 cat <<EOF
 (*
- * Original:  ${SIMPLEPATH}
- * GitCommit: ${GITCOMMIT}
+ * OriginalCode: ${GITCOMMIT} ${SIMPLEPATH}
  *)
 EOF

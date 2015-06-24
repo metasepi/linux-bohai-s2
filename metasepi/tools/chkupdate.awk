@@ -2,29 +2,23 @@
 # Usage: awk -f metasepi/tools/chkupdate.awk < metasepi/fs/proc/DATS/version.dat
 
 BEGIN {
-	line = 0
-	original = ""
-	git_commit = ""
+	comment_level = 0
 }
 
-// {
-	line++
+/^\(\*/ {
+	comment_level++
 }
 
-/Original: / {
-	if (line == 2) {
-		original = $3
-	}
+/^ \*\)/ {
+	comment_level++
 }
 
-/GitCommit: / {
-	if (line == 3) {
+/^ \* OriginalCode: / {
+	if (comment_level == 1) {
 		git_commit = $3
-	}
-}
-
-END {
-	if (original != "" && git_commit != "") {
-		printf "git diff -r %s %s", git_commit, original
+		filename = $4
+		printf("### %s\n", FILENAME)
+		command = sprintf("git diff -r %s %s | cat", git_commit, filename)
+		system(command)
 	}
 }
