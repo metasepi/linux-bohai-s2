@@ -18,17 +18,18 @@ staload "metasepi/include/linux/SATS/uaccess.sats"
 staload "metasepi/fs/SATS/internal.sats"
 staload UN = "prelude/SATS/unsafe.sats"
 
-extern fun memset (s:ptr, c:int, n:size_t): ptr = "mac#" // xxx UNSAFE
+extern fun memset_unsafe {l:addr}
+  (dst: ptr (l), c: int, n: size_t): ptr (l) = "mac#memset"
 
 extern fun statfs_by_dentry_wrap
-(dentry: dentry_t_p, sbuf: &kstatfs_t? >> opt (kstatfs_t, i==0)): #[i:int | i <= 0] int(i) = "mac#"
+  (dentry: dentry_t_p, sbuf: &kstatfs_t? >> opt (kstatfs_t, i==0)): #[i:int | i <= 0] int(i) = "mac#"
 
 extern fun vfs_ustat_ats
-(dev: dev_t, sbuf: &kstatfs_t? >> opt (kstatfs_t, i==0)): #[i:int | i <= 0] int(i) = "mac#"
+  (dev: dev_t, sbuf: &kstatfs_t? >> opt (kstatfs_t, i==0)): #[i:int | i <= 0] int(i) = "mac#"
 implement vfs_ustat_ats(dev, sbuf) = let
   val (pfopt | p) = user_get_super(dev)
 in
-  if (p > 0) then let
+  if p > 0 then let
       prval Some_v (pf) = pfopt
       val e = statfs_by_dentry_wrap(p->s_root, sbuf);
       val () = drop_super(pf | p)
@@ -38,7 +39,7 @@ in
       prval None_v () = pfopt
       prval () = opt_none{kstatfs_t}(sbuf)
     in
-      (~ EINVAL)
+      ~EINVAL
     end
 end
 
@@ -46,11 +47,11 @@ extern fun syscall_ustat_ats (dev: dev_t, ubuf: ptr): int = "sta#"
 implement syscall_ustat_ats (dev, ubuf) = r where {
   fun copy_tmp (sbuf: &kstatfs_t): int = r where {
     var tmp: ustat_t
-    val _ = memset(addr@tmp, 0, sizeof<ustat_t>)
-    val () = tmp.f_tfree := $UN.cast(sbuf.f_bfree)
-    val () = tmp.f_tinode := $UN.cast(sbuf.f_ffree)
-    val r = if copy_to_user(ubuf, addr@tmp, $UN.cast sizeof<ustat_t>) != 0
-            then (~ EFAULT) else 0
+    val _ = memset_unsafe(addr@tmp, 0, sizeof<ustat_t>)
+    val () = tmp.f_tfree := $UN.cast{kernel_daddr_t}(sbuf.f_bfree)
+    val () = tmp.f_tinode := $UN.cast{kernel_ino_t}(sbuf.f_ffree)
+    val r = if copy_to_user(ubuf, addr@tmp, $UN.cast{ulint}(sizeof<ustat_t>)) != 0
+            then ~EFAULT else 0
   }
   var sbuf: kstatfs_t?
   val e = vfs_ustat_ats(new_decode_dev(dev), sbuf)
